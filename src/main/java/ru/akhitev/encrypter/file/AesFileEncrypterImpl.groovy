@@ -1,69 +1,103 @@
+/*
+ * ru.akhitev.encrypter is a library for encryption.
+ * Copyright (c) 2014 Aleksei Khitev (Хитёв Алексей Юрьевич).
+ *
+ * This file is part of ru.akhitev.encrypter
+ *
+ * ru.akhitev.encrypter is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * ru.akhitev.encrypter is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package ru.akhitev.encrypter.file
 
+import org.apache.log4j.Logger
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import java.nio.charset.Charset
 
 /**
- * Created by hitev on 29.04.14.
+ * The class used for encrypting file with AES method
+ *
+ * @author Aleksei Khitev (alexkhitev@gmail.com)
  */
 class AesFileEncrypterImpl implements IFileEncrypter{
+
     /**
-     * Метод шифрования
+     * The constant used for storing encryption method for key specification
      */
     static final String CRYPTION_METHOD = "AES"
 
-    static final String CHIPER_CRYPTION_METHOD = "AES/CBC/PKCS5Padding"
     /**
-     * Кодировка ключа шифрования
+     * The constant used for storing encryption method for chipher specification
+     */
+    static final String CHIPER_CRYPTION_METHOD = "AES/CBC/PKCS5Padding"
+
+    /**
+     * The constant used for storing encryption key's charset
      */
     static final String KEY_CHARSET = "windows-1251"
+
     /**
-     * Длинна ключа
+     * The constant used for storing encryption key's length
      */
     static final int BYTE_ARRAY_LENGTH = 16
+
     /**
-     * Ключ шифрования
+     * Encryption key
      */
     String cryptionKey
+
     /**
-     * Исходный файл
+     * Input file
      */
     File inputFile
+
     /**
-     * Выходной файл
+     * Output file
      */
     File outputFile
 
     /**
-     * Шифорвание файла
+     * Logger
      */
-    @Override
+    Logger logger
+
+    /**
+     * The method used for encryption file
+     */
     void encryptFile() {
-        //Чтение файла в массив байт
-        byte[] inputBytes = readBytesFromFile()
-        //Создание шифратора
+        byte[] inputBytes = readBytesFromFile() // Reading file to the byte array
+        // Creating an encrypter
         Cipher cipher = Cipher.getInstance(CHIPER_CRYPTION_METHOD)
         cipher.init(Cipher.ENCRYPT_MODE, prepareCryptoKey(), new IvParameterSpec(new byte[BYTE_ARRAY_LENGTH]))
-        //Запись в файл результата
-        writeBytesToFile(cipher.doFinal(inputBytes))
+        writeBytesToFile(cipher.doFinal(inputBytes)) // writing byte array to the file
     }
 
     /**
-     * Дешифрование файла
+     * The method used for decryption file
      */
-    @Override
     void decryptFile() {
-        //Чтение из файла в массив байт
-        byte[] inputBytes = readBytesFromFile()
-        //Создание шифратора
+        byte[] inputBytes = readBytesFromFile() // Reading file to the byte array
+        // Creating an encrypter
         Cipher cipher = Cipher.getInstance(CHIPER_CRYPTION_METHOD);
         cipher.init(Cipher.DECRYPT_MODE, prepareCryptoKey(), new IvParameterSpec(new byte[BYTE_ARRAY_LENGTH]));
-        //Вывод в файл результата
-        writeBytesToFile(cipher.doFinal(inputBytes))
+        writeBytesToFile(cipher.doFinal(inputBytes)) // writing byte array to the file
     }
 
+    /**
+     * The method used for preparing encryption key
+     * @return Secret key
+     */
     SecretKeySpec prepareCryptoKey(){
         byte[] raw = cryptionKey.getBytes(Charset.forName(KEY_CHARSET));
         if (raw.length != BYTE_ARRAY_LENGTH) {
@@ -74,7 +108,7 @@ class AesFileEncrypterImpl implements IFileEncrypter{
     }
 
     /**
-     * Чтение файла в массив байт
+     * The method used for reading file to the byte array
      */
     Byte[] readBytesFromFile(){
         ByteArrayOutputStream ous = null
@@ -91,24 +125,32 @@ class AesFileEncrypterImpl implements IFileEncrypter{
                 if (ous != null)
                     ous.close()
             } catch (IOException e) {
-                // swallow, since not that important
+                logger.error("Error in AesFileEncrypterImpl:\n ${e}")
             }
             try {
                 if (ios != null)
                     ios.close()
             } catch (IOException e) {
-                // swallow, since not that important
+                logger.error("Error in AesFileEncrypterImpl:\n ${e}")
             }
         }
         return ous.toByteArray()
     }
 
     /**
-     * Запись массива байт в файл
-     * @param bytes Массив байт
+     * The method used for writing byte array to the file
+     * @param bytes Byte Array
      */
     void writeBytesToFile(byte[] bytes){
         FileOutputStream out = new FileOutputStream(outputFile);
         out.write(bytes);
+    }
+
+    /**
+     * The method used for setting logger
+     * @param logger
+     */
+    void setLogger(Logger logger){
+        this.logger=logger
     }
 }
