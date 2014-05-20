@@ -20,7 +20,10 @@
 package ru.akhitev.encrypter.fileEcryption
 
 import org.junit.Before
+import org.junit.FixMethodOrder
 import org.junit.Test
+import org.junit.runners.MethodSorters
+import ru.akhitev.encrypter.Encrypter
 import ru.akhitev.encrypter.file.AesFileEncrypterImpl
 import ru.akhitev.encrypter.file.IFileEncrypter
 
@@ -29,6 +32,7 @@ import ru.akhitev.encrypter.file.IFileEncrypter
  *
  * @author Aleksei Khitev (alexkhitev@gmail.com)
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class AesFileEncrypterImplTest {
     File inputFile = null
     File encryptedFile = null
@@ -50,25 +54,41 @@ class AesFileEncrypterImplTest {
      * The method used for testing encryption method
      */
     @Test
-    void encryptTest(){
+    void firstTest(){
+        encryptedFile.delete()
         IFileEncrypter coder = new AesFileEncrypterImpl()
-        coder.setCryptionKey(key)
+        coder.setEncryptionKey(key)
         coder.inputFile=inputFile
         coder.outputFile=encryptedFile
         coder.encryptFile()
+        assert encryptedFile.exists()
     }
 
     /**
      * The method used for testing decryption method
      */
     @Test
-    void decryptTest(){
+    void secondTest(){
+        decryptedFile.delete()
         IFileEncrypter coder = new AesFileEncrypterImpl()
-        coder.setCryptionKey(key)
+        coder.setEncryptionKey(key)
         coder.inputFile=encryptedFile
         coder.outputFile=decryptedFile
         coder.decryptFile()
+        assert decryptedFile.exists()
     }
 
+    /**
+     * The method used for testing manager
+     */
+    @Test
+    void thirdTest(){
+        encryptedFile.delete()
+        decryptedFile.delete()
+        Encrypter.encryptFileWithAes(inputFile,encryptedFile,key)
+        encryptedFile.exists()
+        Encrypter.decryptFileWithAes(encryptedFile,decryptedFile,key)
+        decryptedFile.exists()
+    }
 
 }

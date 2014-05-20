@@ -20,6 +20,8 @@
 package ru.akhitev.encrypter.file
 
 import org.apache.log4j.Logger
+import ru.akhitev.encrypter.Encrypter
+
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -55,7 +57,7 @@ class AesFileEncrypterImpl implements IFileEncrypter{
     /**
      * Encryption key
      */
-    String cryptionKey
+    String encryptionKey
 
     /**
      * Input file
@@ -66,11 +68,6 @@ class AesFileEncrypterImpl implements IFileEncrypter{
      * Output file
      */
     File outputFile
-
-    /**
-     * Logger
-     */
-    Logger logger
 
     /**
      * The method used for encryption file
@@ -99,7 +96,7 @@ class AesFileEncrypterImpl implements IFileEncrypter{
      * @return Secret key
      */
     SecretKeySpec prepareCryptoKey(){
-        byte[] raw = cryptionKey.getBytes(Charset.forName(KEY_CHARSET));
+        byte[] raw = encryptionKey.getBytes(Charset.forName(KEY_CHARSET));
         if (raw.length != BYTE_ARRAY_LENGTH) {
             throw new IllegalArgumentException("Invalid key size.");
         }
@@ -125,13 +122,13 @@ class AesFileEncrypterImpl implements IFileEncrypter{
                 if (ous != null)
                     ous.close()
             } catch (IOException e) {
-                logger.error("Error in AesFileEncrypterImpl:\n ${e}")
+                Encrypter.logger.error("Error in AesFileEncrypterImpl:\n ${e}")
             }
             try {
                 if (ios != null)
                     ios.close()
             } catch (IOException e) {
-                logger.error("Error in AesFileEncrypterImpl:\n ${e}")
+                Encrypter.logger.error("Error in AesFileEncrypterImpl:\n ${e}")
             }
         }
         return ous.toByteArray()
@@ -144,13 +141,5 @@ class AesFileEncrypterImpl implements IFileEncrypter{
     void writeBytesToFile(byte[] bytes){
         FileOutputStream out = new FileOutputStream(outputFile);
         out.write(bytes);
-    }
-
-    /**
-     * The method used for setting logger
-     * @param logger
-     */
-    void setLogger(Logger logger){
-        this.logger=logger
     }
 }

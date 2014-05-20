@@ -19,6 +19,10 @@
 
 package ru.akhitev.encrypter
 
+import org.apache.log4j.Logger
+import ru.akhitev.encrypter.file.AesFileEncrypterImpl
+import ru.akhitev.encrypter.file.IFileEncrypter
+
 /**
  * The class used for managing interfaces and implementations
  * for encryption and decryption
@@ -26,5 +30,15 @@ package ru.akhitev.encrypter
  * @author Aleksei Khitev (alexkhitev@gmail.com)
  */
 class Encrypter{
+    static Logger logger
 
+    public static encryptFileWithAes(File inputFile, File outputFile, String encryptionKey){
+        IFileEncrypter fileEncrypter = new AesFileEncrypterImpl(inputFile: inputFile, outputFile: outputFile, encryptionKey: encryptionKey)
+        fileEncrypter.encryptFile()
+    }
+
+    public static decryptFileWithAes(File inputFile, File outputFile, String encryptionKey){
+        IFileEncrypter fileDecrypter = new AesFileEncrypterImpl(inputFile: inputFile, outputFile: outputFile, encryptionKey: encryptionKey)
+        fileDecrypter.decryptFile()
+    }
 }

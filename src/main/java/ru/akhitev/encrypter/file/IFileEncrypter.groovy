@@ -32,7 +32,7 @@ interface IFileEncrypter{
      * The method used for setting encryption key
      * @param encryptionKey Encryption key
      */
-    void setCryptionKey(String cryptionKey)
+    void setEncryptionKey(String encryptionKey)
 
     /**
      * The method used for setting input file
@@ -55,10 +55,4 @@ interface IFileEncrypter{
      * The method used for decrypting file
      */
     void decryptFile()
-
-    /**
-     * The method used for setting logger
-     * @param logger
-     */
-    void setLogger(Logger logger)
 }
