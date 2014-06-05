@@ -86,9 +86,9 @@ class AesFileEncrypterImplTest {
         encryptedFile.delete()
         decryptedFile.delete()
         Encrypter.encryptFileWithAes(inputFile,encryptedFile,key)
-        encryptedFile.exists()
+        assert encryptedFile.exists()
         Encrypter.decryptFileWithAes(encryptedFile,decryptedFile,key)
-        decryptedFile.exists()
+        assert decryptedFile.exists()
     }
 
 }
